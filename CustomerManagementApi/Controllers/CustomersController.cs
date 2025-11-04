@@ -1,6 +1,8 @@
-﻿using CustomerManagementApi.Models;
-using CustomerManagementApi.Services;
+﻿using CustomerManagementApi.Data;
+using CustomerManagementApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CustomerManagementApi.Controllers
 {
@@ -8,36 +10,53 @@ namespace CustomerManagementApi.Controllers
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
-        private readonly CustomerService _service;
+        private static readonly InMemoryDatabaseRoot _dbRoot = new();
 
-        public CustomersController(CustomerService service)
+        private static AppDbContext CreateContext()
         {
-            _service = service;
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase("CustomersDb", _dbRoot)
+                .Options;
+
+            return new AppDbContext(options);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() =>
-            Ok(await _service.GetAllAsync());
+        public async Task<IActionResult> GetAll()
+        {
+            using var ctx = CreateContext();
+            var customers = await ctx.Customers.ToListAsync();
+            return Ok(customers);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var customer = await _service.GetByIdAsync(id);
+            using var ctx = CreateContext();
+            var customer = await ctx.Customers.FindAsync(id);
             return customer == null ? NotFound() : Ok(customer);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Customer customer)
         {
-            var created = await _service.AddAsync(customer);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            using var ctx = CreateContext();
+            ctx.Customers.Add(customer);
+            await ctx.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _service.DeleteAsync(id);
-            return deleted ? NoContent() : NotFound();
+            using var ctx = CreateContext();
+            var customer = await ctx.Customers.FindAsync(id);
+            if (customer == null) return NotFound();
+
+            ctx.Customers.Remove(customer);
+            await ctx.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
