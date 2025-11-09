@@ -6,12 +6,24 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CustomerManagementApi.Controllers
 {
+    /// <summary>
+    /// API controller that provides basic CRUD operations for <see cref="Customer"/> entities.
+    /// Uses an in-memory EF Core store for demonstration and testing purposes.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
+        /// <summary>
+        /// Shared in-memory database root so multiple <see cref="AppDbContext"/> instances
+        /// operate on the same in-memory store for the lifetime of the process.
+        /// </summary>
         private static readonly InMemoryDatabaseRoot _dbRoot = new();
 
+        /// <summary>
+        /// Creates a new <see cref="AppDbContext"/> configured to use the in-memory provider.
+        /// </summary>
+        /// <returns>A configured <see cref="AppDbContext"/> instance.</returns>
         private static AppDbContext CreateContext()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -21,6 +33,10 @@ namespace CustomerManagementApi.Controllers
             return new AppDbContext(options);
         }
 
+        /// <summary>
+        /// Retrieves all customers.
+        /// </summary>
+        /// <returns>200 OK with the list of customers.</returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -29,6 +45,11 @@ namespace CustomerManagementApi.Controllers
             return Ok(customers);
         }
 
+        /// <summary>
+        /// Retrieves a single customer by identifier.
+        /// </summary>
+        /// <param name="id">The customer identifier.</param>
+        /// <returns>200 OK with the customer when found, otherwise 404 NotFound.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -37,6 +58,11 @@ namespace CustomerManagementApi.Controllers
             return customer == null ? NotFound() : Ok(customer);
         }
 
+        /// <summary>
+        /// Creates a new customer record.
+        /// </summary>
+        /// <param name="customer">The customer payload to create.</param>
+        /// <returns>201 Created with a Location header pointing to the new resource.</returns>
         [HttpPost]
         public async Task<IActionResult> Create(Customer customer)
         {
@@ -47,6 +73,11 @@ namespace CustomerManagementApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
         }
 
+        /// <summary>
+        /// Deletes a customer by identifier.
+        /// </summary>
+        /// <param name="id">The customer identifier to remove.</param>
+        /// <returns>204 NoContent when successful, 404 NotFound if the customer does not exist.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

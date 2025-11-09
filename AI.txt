@@ -6,3 +6,9 @@ a) A concise, well-structured README file explaining the project documentation
 	After the first request a second request was added:
 	Add to the ReadME.txt file documentation regarding AppDbContext, Customer and program classes
 	The file was included inside the project 'CustomerManagementApi\CustomerManagementApi.csproj'
+b) Comments for classes, methods, and properties
+	To generate the comments I used the following statement:
+	Please, add comments for classes, methods, and properties for the various classes inside the project 'CustomerManagementApi\CustomerManagementApi.csproj'
+	After the first request a second request was added:
+	Please, do the same in the file Program.cs
+	The updated files replaced the original ones
