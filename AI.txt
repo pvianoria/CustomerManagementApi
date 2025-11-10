@@ -1,0 +1,40 @@
+﻿Task 1: Generate Comprehensive Documentation
+
+a) A concise, well-structured README file explaining the project documentation
+	To generate the ReadMe file I used the following statement:
+	Please, generate a concise, well-structured README.txt file explaining the CustomersController class
+	After the first request a second request was added:
+	Add to the ReadME.txt file documentation regarding AppDbContext, Customer and program classes
+	The file was included inside the project 'CustomerManagementApi\CustomerManagementApi.csproj'
+b) Comments for classes, methods, and properties
+	To generate the comments I used the following statement:
+	Please, add comments for classes, methods, and properties for the various classes inside the project 'CustomerManagementApi\CustomerManagementApi.csproj'
+	After the first request a second request was added:
+	Please, do the same in the file Program.cs
+	The updated files replaced the original ones
+c) API endpoint documentation describing parameters, responses, and examples
+	To generate the API endpoint documentation I used the following statement:
+	Please, generate API endpoint documentation for the CustomersController class inside the project 'CustomerManagementApi\CustomerManagementApi.csproj' in a file named API-documentation.txt, describing parameters, responses, and examples
+	The generated documentation was included inside the API-documentation.txt file
+
+•	Review the generated documentation for accuracy and completeness
+The generated README.txt, API-documentation.txt, and the comments added to the classes, methods, and properties were reviewed for accuracy and completeness. The documentation accurately reflects the functionality of the CustomersController class, AppDbContext, Customer model, and Program class. The API endpoint documentation provides clear descriptions of parameters, responses, and examples for each endpoint. The comments in the code enhance understanding of the purpose and functionality of each component. Overall, the documentation is comprehensive and well-structured.
+
+•	Ask Copilot to generate example usage code for complex APIs
+	To generate example usage code for complex APIs I used the following statement:
+	Please, generate a new console application project named CustomerManagementApi.Client containing example usage code for the CustomersController class inside the project 'CustomerManagementApi\CustomerManagementApi.csproj'
+	The generated example usage code was reviewed and found to be accurate and helpful for understanding how to interact with the CustomersController API endpoints.
+	It was added to the solution 'CustomerManagementApi.sln'.
+
+	Task 2: Generate Unit Tests
+	To generate unit tests, as always I use the following statement:
+	Please, generate unit tests for the CustomersController class using xunit. Ensure that tests cover: happy path scenarios, edge cases, error conditions, boundary values
+	The generated unit tests were added to a new project named 'CustomerManagementApi.Tests\CustomerManagementApi.Tests.csproj' inside the solution 'Customer
+	Running the test we discovered that the controller code was missing some null checks, so we added them manually. It doesn't make sense to ask Copilot to regenerate the unit tests again. It is better to fix what is easily fixable.
+
+	Task 3: Coding Exercise, Add a New Feature Using Prompt Engineering, Refactor Existing Code
+	●	Perform AI-Assisted Code Review
+		To generate the code review I used the following statement:
+		Please identify the issues in CustomersControler class. I'm interested to have code easily testable, to not depent on InMemoryDatabase and avoid static method usage. I would like to use dependency injection in a way that I can use both InMemory database and real SQLite database thanks to a configurtion
+		The suggested changes were implemented, and the code was refactored to improve testability and adhere to best practices.
+		Modifications had to be done manually to make tests pass: if something can be done easily in manual way, it doesn't make sense to use AI.	

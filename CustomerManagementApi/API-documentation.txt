@@ -1,0 +1,114 @@
+CustomersController — API Endpoint Documentation
+==============================================
+
+Controller
+----------
+`CustomersController` — provides simple CRUD operations for `Customer` entities using an in-memory EF Core store.
+
+Base URL
+--------
+Use your application's base URL. Examples below use `{BASE_URL}` which you should replace with your server address (for local development commonly `https://localhost:5001` or `http://localhost:5000`).
+
+Endpoints
+---------
+
+1) List all customers
+   - Method: GET
+   - Route: `/api/customers`
+   - Description: Returns all `Customer` records.
+   - Parameters: none
+   - Responses:
+     - 200 OK — JSON array of customers
+       Example body:
+       [
+         {
+           "id": 1,
+           "firstName": "Jane",
+           "lastName": "Doe",
+           "email": "jane@example.com",
+           "createdAt": "2025-11-09T12:34:56.789Z"
+         }
+       ]
+   - Example:
+     curl -sS "{BASE_URL}/api/customers"
+
+2) Get customer by id
+   - Method: GET
+   - Route: `/api/customers/{id}`
+   - Description: Returns the `Customer` with the specified `id`.
+   - Parameters:
+     - `id` (path, int) — customer identifier
+   - Responses:
+     - 200 OK — JSON object of the customer (when found)
+     - 404 NotFound — when no customer with `id` exists
+   - Example:
+     curl -sS "{BASE_URL}/api/customers/1"
+
+3) Create a new customer
+   - Method: POST
+   - Route: `/api/customers`
+   - Description: Adds a new `Customer` to the store.
+   - Request headers:
+     - `Content-Type: application/json`
+   - Request body (JSON): a `Customer` object. The `Id` is assigned by the store.
+     Example:
+     {
+       "firstName": "Jane",
+       "lastName": "Doe",
+       "email": "jane@example.com"
+     }
+   - Responses:
+     - 201 Created — returns created customer in body and sets `Location` header to the new resource (points to `/api/customers/{id}`)
+       Example response headers:
+         Location: {BASE_URL}/api/customers/1
+       Example body:
+       {
+         "id": 1,
+         "firstName": "Jane",
+         "lastName": "Doe",
+         "email": "jane@example.com",
+         "createdAt": "2025-11-09T12:34:56.789Z"
+       }
+     - (No validation implemented) Malformed requests may result in 400-level errors from model binding in ASP.NET if JSON is invalid.
+   - Example:
+     curl -sS -H "Content-Type: application/json" -d '{"firstName":"Jane","lastName":"Doe","email":"jane@example.com"}' "{BASE_URL}/api/customers"
+
+4) Delete a customer
+   - Method: DELETE
+   - Route: `/api/customers/{id}`
+   - Description: Removes the specified `Customer`.
+   - Parameters:
+     - `id` (path, int) — customer identifier
+   - Responses:
+     - 204 NoContent — deletion succeeded
+     - 404 NotFound — customer not found
+   - Example:
+     curl -sS -X DELETE "{BASE_URL}/api/customers/1"
+
+Model shape (`Customer`)
+------------------------
+The controller uses the `Customer` model with fields:
+- `Id` (int) — primary key assigned by the data store
+- `FirstName` (string?)
+- `LastName` (string?)
+- `Email` (string?)
+- `CreatedAt` (DateTime) — defaulted to `DateTime.UtcNow` on creation
+
+Behavioral notes & limitations
+------------------------------
+- Data persistence: the project uses EF Core's in-memory provider (via a shared `InMemoryDatabaseRoot`) — data is not persisted across application restarts and is only suitable for testing/demos.
+- No model validation attributes are applied — consider adding `[Required]`, `[EmailAddress]`, and length constraints or using DTOs to validate input.
+- Concurrency, authentication/authorization, paging, PATCH/PUT update endpoints, and comprehensive error handling are not implemented.
+- For production use: register `AppDbContext` with DI in `Program.cs`, switch to a relational provider, add migrations, and add validation/middleware for robust error handling.
+
+Quick tips
+----------
+- Replace `{BASE_URL}` with your host and port before running examples.
+- Use the Swagger UI (enabled in development) to explore and exercise the API when running locally (`/swagger`).
+
+File references
+---------------
+- Controller: `CustomerManagementApi\Controllers\CustomersController.cs`
+- DbContext: `CustomerManagementApi\Data\AppDbContext.cs`
+- Model: `CustomerManagementApi\Models\Customer.cs`
+- Startup: `CustomerManagementApi\Program.cs`
